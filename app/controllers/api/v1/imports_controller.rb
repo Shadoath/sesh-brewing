@@ -5,13 +5,13 @@ class Api::V1::ImportsController < Api::V1::ApiController
   def post_tempature
     Rails.logger.info "*** API *** post_tempature"
     Rails.logger.info "*** => params:#{params}"
-    # if params[:article_id] && params[:article_id].to_i != 0
-    # end
-    # render json: {message: "article_import Hit"}
+
     render json: {
       status: 200,
       message: "post_tempature Hit",
     }.to_json
+    #TODO store temp
+    #TempatureLog.create(temp_params)
   end
 
   def get_tempature

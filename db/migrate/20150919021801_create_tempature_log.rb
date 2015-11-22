@@ -1,7 +1,8 @@
 class CreateTempatureLog < ActiveRecord::Migration
   def change
     create_table :tempature_logs do |t|
-      t.temp :string
+      t.string :tempature_c
+      t.timestamps null: false
     end
   end
 end

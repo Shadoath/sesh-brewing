@@ -11,12 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150919021801) do
+ActiveRecord::Schema.define(version: 20151219195930) do
 
-  create_table "tempature_logs", force: :cascade do |t|
-    t.string   "tempature_c"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+  create_table "arduinos", force: :cascade do |t|
+    t.string   "name",                       limit: 255
+    t.integer  "sensor_type",                limit: 4
+    t.float    "current_tempature",          limit: 24
+    t.float    "target_tempature",           limit: 24
+    t.boolean  "is_running?",                limit: 1
+    t.boolean  "relay_on?",                  limit: 1
+    t.boolean  "control_direction_heating?", limit: 1
+    t.integer  "address",                    limit: 4
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
   end
 
 end

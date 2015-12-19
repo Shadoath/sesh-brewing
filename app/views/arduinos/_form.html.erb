@@ -1,0 +1,49 @@
+<%= form_for(@arduino) do |f| %>
+  <% if @arduino.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@arduino.errors.count, "error") %> prohibited this arduino from being saved:</h2>
+
+      <ul>
+      <% @arduino.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %><br>
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :sensor_type %><br>
+    <%= f.number_field :sensor_type %>
+  </div>
+  <div class="field">
+    <%= f.label :current_tempature %><br>
+    <%= f.text_field :current_tempature %>
+  </div>
+  <div class="field">
+    <%= f.label :target_tempature %><br>
+    <%= f.text_field :target_tempature %>
+  </div>
+  <div class="field">
+    <%= f.label :is_running? %><br>
+    <%= f.check_box :is_running? %>
+  </div>
+  <div class="field">
+    <%= f.label :relay_on? %><br>
+    <%= f.check_box :relay_on? %>
+  </div>
+  <div class="field">
+    <%= f.label :control_direction_heating? %><br>
+    <%= f.check_box :control_direction_heating? %>
+  </div>
+  <div class="field">
+    <%= f.label :address %><br>
+    <%= f.number_field :address %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,63 @@
+<div class="row">
+  <div class="small-12 columns">
+    <p id="notice"><%= notice %></p>
+
+    <h1>Listing Arduinos</h1>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Sensor type</th>
+          <th>Current tempature</th>
+          <th>Target tempature</th>
+          <th>Is running?</th>
+          <th>Relay on?</th>
+          <th>Control direction heating?</th>
+          <th>Address</th>
+          <th colspan="3"></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @arduinos.each do |arduino| %>
+          <tr>
+            <td><%= arduino.name %></td>
+            <td><%= arduino.sensor_type %></td>
+            <td><%= arduino.current_tempature %></td>
+            <td><%= arduino.target_tempature %></td>
+            <td><%= arduino.is_running? %></td>
+            <td><%= arduino.relay_on? %></td>
+            <td><%= arduino.control_direction_heating? %></td>
+            <td><%= arduino.address %></td>
+            <td><%= link_to 'Show', arduino %></td>
+            <td><%= link_to 'Edit', edit_arduino_path(arduino) %></td>
+            <td><%= link_to 'Destroy', arduino, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <br>
+
+    <%= link_to 'New Arduino', new_arduino_path %>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

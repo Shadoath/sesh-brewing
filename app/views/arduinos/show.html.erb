@@ -1,0 +1,50 @@
+<div class="row">
+  <div class="small-12 columns">
+    <p id="notice"><%= notice %></p>
+
+    <p>
+      <strong>Name:</strong>
+      <%= @arduino.name %>
+    </p>
+
+    <p>
+      <strong>Sensor type:</strong>
+      <%= @arduino.sensor_type %>
+    </p>
+
+    <p>
+      <strong>Current tempature:</strong>
+      <%= @arduino.current_tempature %>
+    </p>
+
+    <p>
+      <strong>Target tempature:</strong>
+      <%= @arduino.target_tempature %>
+    </p>
+
+    <p>
+      <strong>Is running?:</strong>
+      <%= @arduino.is_running? %>
+    </p>
+
+    <p>
+      <strong>Relay on?:</strong>
+      <%= @arduino.relay_on? %>
+    </p>
+
+    <p>
+      <strong>Control direction heating?:</strong>
+      <%= @arduino.control_direction_heating? %>
+    </p>
+
+    <p>
+      <strong>Address:</strong>
+      <%= @arduino.address %>
+    </p>
+
+    <%= link_to 'Edit', edit_arduino_path(@arduino) %> |
+    <%= link_to 'Back', arduinos_path %>
+      </div>
+</div>
+
+

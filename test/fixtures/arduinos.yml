@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  sensor_type: 1
+  current_tempature: 1.5
+  target_tempature: 1.5
+  is_running?: false
+  relay_on?: false
+  control_direction_heating?: false
+  address: 1
+
+two:
+  name: MyString
+  sensor_type: 1
+  current_tempature: 1.5
+  target_tempature: 1.5
+  is_running?: false
+  relay_on?: false
+  control_direction_heating?: false
+  address: 1

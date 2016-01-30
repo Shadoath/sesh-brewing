@@ -1,6 +1,9 @@
 class ArduinosController < ApplicationController
   before_action :set_arduino, only: [:show, :edit, :update, :destroy]
 
+  def get_tempature
+
+  end
   # GET /arduinos
   def index
     @arduinos = Arduino.all

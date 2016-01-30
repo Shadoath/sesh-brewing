@@ -1,3 +1,4 @@
+
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #
 # When restarting this program, first run: $ echo "18" > /sys/class/gpio/unexport
@@ -29,9 +30,10 @@ length_string = String.new
 $start_of_text = 2
 $end_of_text   = 3
 $device_id     = 254    #Pi IP
-$sender_id     = 001		#Self IP
+$sender_id     = '001'		#Self IP
 $seperator     = ':'
 
+$arduinos      = []
 puts "Connection established to rs485 network at 9600 baud"
 puts "send 'exit' from another device on the rs485 network to close this program"
 
@@ -47,20 +49,29 @@ $enable_pin.off					#initialize in off state
 #function to echo the message
 def send(msg)
 	output_buffer = String.new
-	output_buffer << $start_of_text << $sender_id.to_s << $seperator << $device_id.to_s << $seperator << msg << $end_of_text
+	output_buffer << $start_of_text << $sender_id.to_s << $seperator << $device_id.to_s << $seperator << to_msg_length(msg) << $seperator << msg << $seperator << $end_of_text
 
-	                                        	#echo recieved message back to sender
-  $enable_pin.on					  #enable trasmission on RS485 network
+	#echo recieved message back to sender
+	$enable_pin.on					  #enable trasmission on RS485 network
 	sleep(0.01)					#allow network to establish "transmit" state
-  $serial_port.write(output_buffer)
-  $enable_pin.off					#disable trasmission on RS485 network
+	$serial_port.write(output_buffer)
+	$enable_pin.off					#disable trasmission on RS485 network
 
 	puts "Sent on rs485: " + output_buffer
 end
 
+def to_msg_length(msg)
+	msg.length < 10 ? "0" + msg.length.to_s : msg.length.to_s
+end
 
-
-
+#def get_arduinos
+#	i = 0
+#	while (i< 254)
+#		send("RA")
+#		puts "getting:"+i+ " "+ read
+#		i++
+#	end
+#end
 
 
 #function to read the serial buffer

@@ -28,8 +28,8 @@ $message = String.new
 length_string = String.new
 $start_of_text = 2
 $end_of_text   = 3
-$sender_ip     = 254  #Pi IP
-$recipient_id  = 1		#Self IP
+$device_id     = 254    #Pi IP
+$sender_id     = 001		#Self IP
 $seperator     = ':'
 
 puts "Connection established to rs485 network at 9600 baud"
@@ -45,15 +45,15 @@ $enable_pin.off					#initialize in off state
 
 
 #function to echo the message
-def send(msg, en_pin, $serial_port)
+def send(msg)
 	output_buffer = String.new
-	output_buffer << $start_of_text << $recipient_id.to_s << $seperator << $sender_ip.to_s << $seperator << msg << $end_of_text
+	output_buffer << $start_of_text << $sender_id.to_s << $seperator << $device_id.to_s << $seperator << msg << $end_of_text
 
 	                                        	#echo recieved message back to sender
-  en_pin.on					  #enable trasmission on RS485 network
+  $enable_pin.on					  #enable trasmission on RS485 network
 	sleep(0.01)					#allow network to establish "transmit" state
   $serial_port.write(output_buffer)
-  en_pin.off					#disable trasmission on RS485 network
+  $enable_pin.off					#disable trasmission on RS485 network
 
 	puts "Sent on rs485: " + output_buffer
 end
@@ -67,22 +67,21 @@ end
 def read
 		$input_buffer = String.new
 	  if 	is_message? $serial_port.getbyte()
-		    length_string = $serial_port.read(2)              	#get the next two chars in the buffer, which represent the length of the message
-		    msg_length = length_string.to_i                 #convert string to integer for next operation
-		    if $serial_port.read(1) == $seperator              	#read in seperator char
-	          sleep(0.06)				#delay needed to receive at least 64 chars on hardware buffer, experimentally derrived
-						$message = $serial_port.read(msg_length)
-						analyize_message($message)
-						return_message($message)
-				else
-	      		puts "no seperator received after start character and length value"
-		    end
-
+				sleep(0.06)				#delay needed to receive at least 64 chars on hardware buffer, experimentally derrived
+				to_id = $serial_port.read(3)
+				@serial_port.getbyte()
+				$sender_id = $serial_port.read(3)
+				@serial_port.getbyte()
+				length_string = $serial_port.read(2) #get the next two chars in the buffer, which represent the length of the message
+				@serial_port.getbyte()
+				$message = $serial_port.read(length_string.to_i )
+				analyize_message($message)
+				# return_message($message)
     end
-    message
+    $message
 end
 
-def is_message?(message)
+def is_message?(serial_available)
 	if !serial_available.nil?				#look for any chars on the incoming hardware buffer
     puts serial_available                           #print out extra chars that weren't read in the buffer
   end
@@ -90,7 +89,7 @@ def is_message?(message)
 end
 
 def analyize_message(message)
-	puts msg_length + " characters recieved: " + message
+	puts message.length.to_s + " characters recieved: " + message
 	#TODO
 	# get Arduino and update values
 	#
@@ -98,7 +97,7 @@ end
 
 def return_message(message)
 	if $serial_port.getbyte() == $end_of_text #Check end char and return
-			send($message, $enable_pin, $serial_port)
+			send($message)
 	end
 end
 
@@ -108,7 +107,7 @@ end
 
 #rock the infinite loop, bro
 #while true do
-#	if read(serialport) == "exit"
+#	if read == "exit"
 #		exit
 #	end
 #end

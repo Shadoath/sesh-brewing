@@ -1,4 +1,3 @@
-
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #
 # When restarting this program, first run: $ echo "18" > /sys/class/gpio/unexport
@@ -27,10 +26,9 @@ include PiPiper
 $serial_port = Serial.new '/dev/ttyAMA0', 9600
 $message = String.new
 length_string = String.new
-$start_of_text = 2
-$end_of_text   = 3
-$device_id     = 254    #Pi IP
-$sender_id     = '001'		#Self IP
+$start_of_text = 2.chr
+$end_of_text   = 3.chr
+$device_id     = 254    #Pi IP (SELF)
 $seperator     = ':'
 
 $arduinos      = []
@@ -47,9 +45,9 @@ $enable_pin.off					#initialize in off state
 
 
 #function to echo the message
-def send(msg)
+def send(recipient, msg)
 	output_buffer = String.new
-	output_buffer << $start_of_text << $sender_id.to_s << $seperator << $device_id.to_s << $seperator << to_msg_length(msg) << $seperator << msg << $seperator << $end_of_text
+	output_buffer << $start_of_text << to_id_string(recipient) << $seperator << to_id_string($device_id) << $seperator << to_msg_length(msg) << $seperator << msg << $end_of_text
 
 	#echo recieved message back to sender
 	$enable_pin.on					  #enable trasmission on RS485 network
@@ -58,6 +56,17 @@ def send(msg)
 	$enable_pin.off					#disable trasmission on RS485 network
 
 	puts "Sent on rs485: " + output_buffer
+end
+
+def to_id_string(id)
+	id_string = String.new
+	if id < 100 
+		id_string << "0"
+	end
+	if id < 10
+		id_string << "0"
+	end
+	id_string << id.to_s
 end
 
 def to_msg_length(msg)
@@ -76,30 +85,29 @@ end
 
 #function to read the serial buffer
 def read
-		$input_buffer = String.new
-	  if 	is_message? $serial_port.getbyte()
-				sleep(0.06)				#delay needed to receive at least 64 chars on hardware buffer, experimentally derrived
-				to_id = $serial_port.read(3)
-				@serial_port.getbyte()
-				$sender_id = $serial_port.read(3)
-				@serial_port.getbyte()
-				length_string = $serial_port.read(2) #get the next two chars in the buffer, which represent the length of the message
-				@serial_port.getbyte()
-				$message = $serial_port.read(length_string.to_i )
-				analyize_message($message)
-				# return_message($message)
-    end
-    $message
+	$message = ""
+	hash = String.new						#this is where the address and length data is stored
+	if is_message? $serial_port.getbyte()				#getbyte() returns the first byte if it exists or nil if nothing exists
+		sleep(0.06)						#delay needed to receive at least 64 chars on hardware buffer, experimentally derrived
+
+		hash = $serial_port.read(10)				#read in all the hash data
+			puts hash
+		recipient = hash[0..2].to_i
+		sender = hash[4..6].to_i
+		message_length = hash[8..9].to_i
+		$serial_port.getbyte()					#read in seperator and clear it from the buffer
+
+		$message = $serial_port.read(message_length)		#read in the message
+		analyze_message($message)				#this function only prints stuff out, at this point
+	end
+	$message
 end
 
 def is_message?(serial_available)
-	if !serial_available.nil?				#look for any chars on the incoming hardware buffer
-    puts serial_available                           #print out extra chars that weren't read in the buffer
-  end
-	serial_available == $start_of_text
+	serial_available.to_i.chr == $start_of_text			#return true or false - must convert char "2" to and integer and then to ascii by .to_i.chr
 end
 
-def analyize_message(message)
+def analyze_message(message)
 	puts message.length.to_s + " characters recieved: " + message
 	#TODO
 	# get Arduino and update values
@@ -108,7 +116,7 @@ end
 
 def return_message(message)
 	if $serial_port.getbyte() == $end_of_text #Check end char and return
-			send($message)
+		send($message)
 	end
 end
 

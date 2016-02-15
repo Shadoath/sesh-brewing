@@ -1,12 +1,14 @@
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #
-# When restarting this program, first run: $ echo "18" > /sys/class/gpio/unexport
-# This will free up the GPIO pin 24 for this program to use
+# No longer needed: 	When restarting this program, first run: $ echo "18" > /sys/class/gpio/unexport
+# 						This will free up the GPIO pin 24 for this program to use
 #
-# Run on IRB
+# Run on IRB:
 # sudo irb -r ./master.rb
+#
 # UART functionality:
 # This program communicates on the PI B+ using hardware UART on physical GPIO pins 8 (TX) and 10 (RX).
+# These pins are accessed at the hardware/software interface /dev/ttyAMA0
 # To do this the rubyserial gem is utilized.
 #
 # RS485 network functionality:
@@ -38,7 +40,6 @@ puts "type 'gexit()' to close this program"
 #params for GPIO
 $enable_pin = PiPiper::Pin.new(:pin => 18, :direction => :out)
 $enable_pin.off											#initialize in off state
-
 
 
 
@@ -114,11 +115,11 @@ def analyze_message(message)
 	#
 end
 
-def return_message(message)
-	if $serial_port.getbyte() == $end_of_text 			#Check end char and return
-		send($message)
-	end
-end
+#def return_message(message)
+#	if $serial_port.getbyte() == $end_of_text 			#Check end char and return
+#		send($message)
+#	end
+#end
 
 
 

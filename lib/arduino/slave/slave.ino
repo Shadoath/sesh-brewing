@@ -115,11 +115,9 @@ void process_rs485_message(String message){
   String debugString = "";    
   String newMessage = "";                                     //used for sending new messages generated form this function to rs485 network
 
-  if( message.length() < 10 ) return;                          //Check for correct message length ( at least "To(3):From(3):Command(1) ..." ) before analyzing
+  if( message.length() < 10 ) return;                          //Check for correct message length ( at least "To(3):From(3):Lenght(2)Command(1) ..." ) before analyzing
 
   int sender = message.substring(4,7).toInt();
-  Serial.println("string at (14,17):");
-  Serial.println(message.substring(14,17));
   
   if( message.substring(0,3).toInt() == EEPROMData.settings.Self_Address || message.substring(11,13) == "CO")
     switch(message[11])
@@ -290,6 +288,7 @@ void process_ui_message(String ui_message){
       if( ui_message.substring(0,4) == "help" )
       {
         msg_string += "List of commands:\n";
+        msg_string += " send:<ToAddress>:<message>!\n";
         msg_string += " help!\n";
         msg_string += " exit!\n";
         msg_string += " debug<1,0>!\n";
@@ -345,7 +344,10 @@ void process_ui_message(String ui_message){
       }
       break;
   }
-  
+
+  if( ui_message.length() > 5 )
+    if( ui_message.substring(0,5) == "send:" )
+      send_message( ui_message.substring( 5,8 ).toInt(), ui_message.substring( 9,ui_message.length() ) );
     
   if( msg_string != "" ) Serial.println(msg_string);
 }
@@ -395,7 +397,7 @@ String read_rs485_message(){
     }
     if( debug == 1 )
     {
-      Serial.print("Recieved "); Serial.print(message_string.length()); Serial.print(" chars from rs485: "); Serial.println(message_string);  
+      Serial.print(message_string.length()); Serial.print(" chars from rs485: "); Serial.println(message_string);  
     }
   }
   return message_string;

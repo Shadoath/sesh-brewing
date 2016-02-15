@@ -33,7 +33,7 @@ $seperator     = ':'
 
 $arduinos      = []
 puts "Connection established to rs485 network at 9600 baud"
-puts "send 'exit' from another device on the rs485 network to close this program"
+puts "type 'gexit()' to close this program"
 
 #params for GPIO
 $enable_pin = PiPiper::Pin.new(:pin => 18, :direction => :out)
